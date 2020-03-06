@@ -1,0 +1,29 @@
+         3680642 function calls in 654.349 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000  654.349  654.349 <string>:1(<module>)
+   207348    0.270    0.000    1.357    0.000 _dtype.py:319(_name_includes_bit_suffix)
+   207348    0.693    0.000    2.402    0.000 _dtype.py:333(_name_get)
+   207348    0.107    0.000    0.107    0.000 _dtype.py:36(_kind_name)
+   103674    0.526    0.000    5.720    0.000 analyze.py:17(random_crop)
+   103674  119.324    0.001  119.324    0.001 analyze.py:26(normalize)
+        1    3.697    3.697  654.349  654.349 analyze.py:32(foo)
+   414696    0.377    0.000    0.767    0.000 numerictypes.py:293(issubclass_)
+   207348    0.294    0.000    1.087    0.000 numerictypes.py:365(issubdtype)
+        1    0.000    0.000  654.349  654.349 {built-in method builtins.exec}
+   829392    0.483    0.000    0.483    0.000 {built-in method builtins.issubclass}
+   103674    1.178    0.000    1.178    0.000 {built-in method from_numpy}
+   103674    3.257    0.000    3.257    0.000 {built-in method numpy.fromstring}
+   103674    0.121    0.000    0.121    0.000 {built-in method posix.close}
+   103674    2.294    0.000    2.294    0.000 {built-in method posix.open}
+    52048    3.158    0.000    3.158    0.000 {flip}
+   103674  382.914    0.004  382.914    0.004 {imdecode}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+   207348    0.178    0.000    0.178    0.000 {method 'format' of 'str' objects}
+   207348    2.792    0.000    5.193    0.000 {method 'randint' of 'numpy.random.mtrand.RandomState' objects}
+   103674    0.040    0.000    0.040    0.000 {method 'random' of '_random.Random' objects}
+   103674  111.494    0.001  111.494    0.001 {method 'read' of 'mmap.mmap' objects}
+   103674    0.154    0.000    0.154    0.000 {method 'transpose' of 'numpy.ndarray' objects}
+   103674   20.996    0.000   20.996    0.000 {resize}

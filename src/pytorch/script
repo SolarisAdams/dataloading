@@ -1,0 +1,39 @@
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch vgg13 -b 384 -p 1
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch resnet18 -b 1024 -p 1 -j 16
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch resnet18 -b 256 -p 10 -j 16
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch resnet50 -b 256 -p 1
+
+/home/Adama/Envs/dataloading/bin/python /home/Adama/dataloading/src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch resnet18 -b 512 -j 16
+
+/home/Adama/Envs/dataloading/bin/python /home/Adama/dataloading/src/pytorch/pure-train.py /data/ -b 384 -j 16 -a vgg13
+
+/home/Adama/Envs/dataloading/bin/python /home/Adama/dataloading/src/pytorch/train-prefetch.py /data/pytorch-imagenet-data/ -b 1024 -j 16 -a resnet50
+
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch resnet50 -b 384 -p 10 -j 16
+
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch alexnet -b 384 -p 10 -j 16
+
+/home/Adama/Envs/dataloading/bin/python /home/Adama/dataloading/src/pytorch/pure-train.py /data/ -b 1024 -j 16 -a alexnet
+/home/Adama/Envs/dataloading/bin/python /home/Adama/dataloading/src/pytorch/train-prefetch.py /data/pytorch-imagenet-data/ -b 1024 -j 16 -a alexnet
+
+nmon -s1 -c200 -f -m utils/
+nvidia-smi --query-gpu=utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv -l 1 -f utils/alexnet-load.csv -i 1
+
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch alexnet -b 1024 -p 1 -j 16
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch resnet18 -b 1024 -p 1 -j 16
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch alexnet -b 1024 -p 10 -j 16
+
+
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch resnet18 -b 512 -p 1 -j 16
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch resnet18 -b 256 -p 1 -j 16
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch resnet18 -b 128 -p 1 -j 16
+
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch resnet18 -b 512 -p 10 -j 16
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch resnet18 -b 256 -p 10 -j 16
+python src/pytorch/loading.py /data/pytorch-imagenet-data/ --arch resnet18 -b 128 -p 10 -j 16
+
+python ~/im2rec.py --list True --recursive True /data/pytorch-imagenet-data/ /data/pytorch-imagenet-data/train
+
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch densenet121 -b 256 -p 1 -j 16
+
+python src/pytorch/train.py /data/pytorch-imagenet-data/ --arch googlenet -b 256 -p 1 -j 16
