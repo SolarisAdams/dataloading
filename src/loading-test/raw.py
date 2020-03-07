@@ -5,7 +5,7 @@ import prep
 NUM_WORKER = 16
 print(NUM_WORKER)
 
-def get_metadata(metadata_path='/home/Adama/metadata'):
+def get_metadata(metadata_path):
     with open("metadata", "r") as f:
         lines = f.readlines()
     records = []
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     import time
     #you should prepare your metadata 
     #and give your metadata path
-    records = get_metadata('/home/Adama/metadata')
+    records = get_metadata('/home/Adama/dataloading/metadata')
     # records = records[0:10000]
     print(len(records))
     begin = time.time()

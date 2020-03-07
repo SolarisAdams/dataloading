@@ -15,10 +15,9 @@ if len(sys.argv)>1:
     sleep = 1
     sleep_time = timelist[int(sys.argv[1])]
     batch_size = 512
-    limit = 80
+    # limit = 80
     worker = int(sys.argv[2])
-    if worker == 1:
-        limit = 50
+    limit = worker*8+50
 
 med = np.array([[[0.485, 0.456, 0.406]for _ in range(224)]for __ in range(224)])
 
@@ -46,9 +45,22 @@ def random_crop(image, crop_height, crop_width):
     return crop
 
 
+def resize(img, square=224):
+    height, width, _ = img.shape
+    if height > width:
+        height = height * square / width
+        width = square
+    else:
+        width = width * square / height
+        height = square
+    dim = (int(width), int(height))
+    img = cv2.resize(img, dim)
+    return img
+
+
 def transform(image):
 
-    image = cv2.resize(image, (224, 224))
+    image = resize(image)
     image = random_crop(image,224,224)
 
 
@@ -64,7 +76,7 @@ def transform(image):
     return image
 
 def preprocess_for_train(image):
-    image = cv2.resize(image, (224, 224))
+    image = resize(image)
     image = random_crop(image,224,224)
 
 
@@ -80,7 +92,7 @@ def preprocess_for_train(image):
 def transform_for_mxnet(image, label):
     # image = image.asnumpy()
 
-    image = cv2.resize(image, (224, 224))
+    image = resize(image)
     image = random_crop(image,224,224)
 
 
@@ -121,17 +133,7 @@ def transform_for_mxnet(image, label):
 #         out = f.read()
 #     return out
 
-# def resize(img, square=224):
-#     height, width, _ = img.shape
-#     if height > width:
-#         height = height * square / width
-#         width = square
-#     else:
-#         width = width * square / height
-#         height = square
-#     dim = (int(width), int(height))
-#     img = cv2.resize(img, dim)
-#     return img
+
 
 # def random_crop(image, crop_height, crop_width):
 #     max_x = image.shape[1] - crop_width + 1

@@ -4,7 +4,7 @@ import time
 # import datasets_util
 
 
-NUM_IMAGES = 1281144
+# NUM_IMAGES = 1281144
 
 
 def get_dataset2(metadata_name = "metadata"):
@@ -44,9 +44,6 @@ def get_dataset(pro=True):
         image = prep.preprocess_for_train(image)    
         image = tf.convert_to_tensor(image)
     
-
-
-
         return image, label
         #vgg_preprocessing_v2.preprocess_for_train is from a famous third party repo called tensorflow slim 
 
@@ -55,7 +52,7 @@ def get_dataset(pro=True):
     # if datasets_util.prepare_metadata(metadata_name = "/home/Adama/tensorflow/metadata") is True:
     #     print("generate metadata successfully")    
         
-    dataset = get_dataset2(metadata_name = "/home/Adama/tensorflow/metadata").shuffle(1024).map(lambda x, y: tf.py_function(process, [x, y], [tf.float64, tf.int32]), num_parallel_calls=None).batch(prep.batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+    dataset = get_dataset2(metadata_name = "/home/Adama/dataloading/metadata").shuffle(1024).map(lambda x, y: tf.py_function(process, [x, y], [tf.float64, tf.int32]), num_parallel_calls=prep.worker).batch(prep.batch_size).prefetch(tf.data.experimental.AUTOTUNE)
 
     return dataset
 

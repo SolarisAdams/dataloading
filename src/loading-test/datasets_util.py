@@ -37,7 +37,7 @@ def get_paths(data_root):
             label = label_to_index[path.parent.name]
             f.writelines(str(path) + '\t' + str(label) + '\n')
 
-root = pathlib.Path("/data/ImageNet/")
+root = pathlib.Path("/data/pytorch-imagenet-data/train")
 print(root)
 get_paths(root)
 

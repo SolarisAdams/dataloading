@@ -3,7 +3,7 @@ import os
 root = "/home/Adama/dataloading/loading/"
 files = os.listdir(root)
 sleep = 0
-start = 30
+start = 40
 
 with open(root + "avg.ans","w") as fo:
     for filename in files:
