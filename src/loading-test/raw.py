@@ -1,7 +1,7 @@
 import multiprocessing
 import sys
 import prep
-
+# import time
 NUM_WORKER = 16
 print(NUM_WORKER)
 
@@ -15,9 +15,13 @@ def get_metadata(metadata_path):
     return records
 
 def work_process(q_in):
+    # tot = 0.0
     while True:
+        # start = time.time()
         deq = q_in.get()
+        # tot += time.time()-start
         if deq is None:
+            # print(tot)
             break
         path, label = deq
         image = prep.readImageWithMmap(path)
@@ -48,7 +52,7 @@ if __name__ == "__main__":
     #you should prepare your metadata 
     #and give your metadata path
     records = get_metadata('/home/Adama/dataloading/metadata')
-    # records = records[0:10000]
+    records = records[100000:150000]
     print(len(records))
     begin = time.time()
     main(records)
