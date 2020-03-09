@@ -6,7 +6,7 @@ import mxnet as mx
 import os
 import mmap
 import sys
-
+import simplejpeg
 print(sys.argv)
 
 timelist = [0,0.1,0.2,0.3,0.4,0.5,0.8,1,2]
@@ -27,6 +27,10 @@ def readImageWithMmap(path):
     mm = mmap.mmap(fd, 0, access=mmap.ACCESS_READ) 
     os.close(fd)
     img = np.fromstring(mm.read(), dtype="uint8")
+    # try:
+    #     img = simplejpeg.decode_jpeg(img, colorspace="bgr")
+    # except:
+    #     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
     return img
 

@@ -3,9 +3,9 @@ import random
 import numpy as np
 import os
 import time
+import simplejpeg
 
-
-BATCH = 2
+BATCH = 1
 
 def random_crop(image, crop_height, crop_width):
     max_x = image.shape[1] - crop_width + 1
@@ -29,20 +29,25 @@ def resize(img, square=224):
 
 def transform(raw):
     # image = np.asarray(bytearray(raw), dtype="uint8")
-    for image in raw:
-        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-        # image = resize(image)
-        # image = random_crop(image,224,224)
+    images = []
+    for i in range(len(raw)):
+        # images.append(cv2.imdecode(raw[i], cv2.IMREAD_COLOR))
+        images.append(simplejpeg.decode_jpeg(raw[i], colorspace="bgr"))
+        # print(images[i])
+    # for image in images:
+    #     image = resize(image)
+    #     image = random_crop(image,224,224)
 
 
-        # if random.random()<0.5:
-        #     image = cv2.flip(image, 1)
+    #     if random.random()<0.5:
+    #         image = cv2.flip(image, 1)
 
-        # image = image / 255.0
-        # image = image - (0.485, 0.456, 0.406)
-        # image = image / (0.229, 0.224, 0.225)
-        # image = image.transpose((2, 0, 1))
-    return image
+    #     image = image / 255.0
+    #     image = image - (0.485, 0.456, 0.406)
+    #     image = image / (0.229, 0.224, 0.225)
+    #     image = image.transpose((2, 0, 1))
+        # print(image)
+    return images
 
 def read_all(records):
     result = [None] * len(records)
@@ -67,7 +72,7 @@ if __name__ == "__main__":
     #you should prepare your metadata 
     #and give your metadata path
     records = get_metadata('/home/Adama/dataloading/metadata')
-    records = records[0:20000]
+    records = records[10000:20000]
     random.shuffle(records)
     raws = read_all(records)
     print(len(records))

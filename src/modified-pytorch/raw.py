@@ -7,8 +7,8 @@ import time
 # NUM_WORKER = 32
 # print(NUM_WORKER)
 
-READ_WORKER = 1
-TRANSFORM_WORKER = 1
+READ_WORKER = 8
+TRANSFORM_WORKER = 16
 print("read worker:\t", READ_WORKER)
 print("transform worker:\t", TRANSFORM_WORKER)
 
@@ -107,8 +107,8 @@ if __name__ == "__main__":
     #you should prepare your metadata 
     #and give your metadata path
     records = get_metadata('/home/Adama/dataloading/metadata')
-    base = 100000
-    records = records[base:base+2000]
+    base = 10000
+    records = records[base:base+20000]
     print(len(records))
     begin = time.time()
     main(records)

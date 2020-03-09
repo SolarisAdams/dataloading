@@ -52,7 +52,7 @@ if __name__ == "__main__":
     #you should prepare your metadata 
     #and give your metadata path
     records = get_metadata('/home/Adama/dataloading/metadata')
-    records = records[100000:150000]
+    # records = records[10000:15000]
     print(len(records))
     begin = time.time()
     main(records)

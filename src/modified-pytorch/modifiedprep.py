@@ -6,6 +6,8 @@ import random
 import os
 import mmap
 import sys
+import simplejpeg
+
 
 def readImageWithMmap(path):
     fd =  os.open(path, os.O_RDONLY | os.O_DIRECT) 
@@ -38,7 +40,11 @@ def resize(img, square=224):
 
 
 def transform(image):
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    # image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    try:
+        image = simplejpeg.decode_jpeg(image, colorspace="bgr")
+    except:
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     image = resize(image)
     image = random_crop(image,224,224)
 
