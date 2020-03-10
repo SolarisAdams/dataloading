@@ -40,31 +40,31 @@ def CVLoader(path):
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 
-def random_crop(image, crop_shape, padding=None):
-    img_h = image.shape[0]
-    img_w = image.shape[1]
-    img_d = image.shape[2]
+# def random_crop(image, crop_shape, padding=None):
+#     img_h = image.shape[0]
+#     img_w = image.shape[1]
+#     img_d = image.shape[2]
 
     
-    oshape_h = img_h + 2 * padding
-    oshape_w = img_w + 2 * padding
-    img_pad = np.zeros([oshape_h, oshape_w, img_d], np.uint8)
-    img_pad[padding:padding+img_h, padding:padding+img_w, 0:img_d] = image
+#     oshape_h = img_h + 2 * padding
+#     oshape_w = img_w + 2 * padding
+#     img_pad = np.zeros([oshape_h, oshape_w, img_d], np.uint8)
+#     img_pad[padding:padding+img_h, padding:padding+img_w, 0:img_d] = image
 
-    nh = random.randint(0, oshape_h - crop_shape[0])
-    nw = random.randint(0, oshape_w - crop_shape[1])
-    image_crop = img_pad[nh:nh + crop_shape[0], nw:nw + crop_shape[1]]
+#     nh = random.randint(0, oshape_h - crop_shape[0])
+#     nw = random.randint(0, oshape_w - crop_shape[1])
+#     image_crop = img_pad[nh:nh + crop_shape[0], nw:nw + crop_shape[1]]
 
-    return image_crop
+#     return image_crop
 
 
-# def random_crop(image, crop_height, crop_width):
-#     max_x = image.shape[1] - crop_width + 1
-#     max_y = image.shape[0] - crop_height + 1
-#     x = np.random.randint(0, max_x)
-#     y = np.random.randint(0, max_y)
-#     crop = image[y: y + crop_height, x: x + crop_width]
-#     return crop
+def random_crop(image, crop_height, crop_width):
+    max_x = image.shape[1] - crop_width + 1
+    max_y = image.shape[0] - crop_height + 1
+    x = np.random.randint(0, max_x)
+    y = np.random.randint(0, max_y)
+    crop = image[y: y + crop_height, x: x + crop_width]
+    return crop
 
 
 def resize(img, square=224):
@@ -83,7 +83,7 @@ def resize(img, square=224):
 def transform(image):
 
     image = resize(image)
-    image = random_crop(image,(224,224), 80)
+    image = random_crop(image,224,224)
 
 
     if random.random()<0.5:

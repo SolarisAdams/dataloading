@@ -8,25 +8,42 @@ import torch.nn as nn
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim
+import torch.distributed as dist
 import time
 from PIL import Image
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+import argparse
 
 arch_list = ["alexnet", "resnet18", "squeezenet1_1", "shufflenet_v2_x1_0", "mnasnet0_5"]
-batch_size_list = [1024, 1024, 1024, 1536, 1024]
+batch_size_list = [1024 for _ in range(5)]
+mode_list = ["full", "load", "train"]
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--local_rank', default=-1, type=int,
+                    help='node rank for distributed training')
+parser.add_argument('--mode', default="full", choices=mode_list,
+                    help='work mode')
+parser.add_argument('--arch', default=0, type=int,
+                    help='arch') 
+parser.add_argument('--num_worker', default=16, type=int,
+                    help='number of workers')                    
+args = parser.parse_args()
 
 
+mode = args.mode
+arch = arch_list[args.arch]
+num_worker = args.num_worker
 
-
-
-mode = sys.argv[1]
-arch = arch_list[int(sys.argv[2])]
-num_worker = int(sys.argv[3])
-
-batch_size = batch_size_list[int(sys.argv[2])]
+batch_size = batch_size_list[args.arch]
 print_freq = 5
 limit = 200
+
+dist.init_process_group(backend='nccl')
+torch.cuda.set_device(args.local_rank)
+
+
+
 
 
 class FakeDataset(torch.utils.data.Dataset):
@@ -185,27 +202,29 @@ traindir = "/data/pytorch-imagenet-data/train/"
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])
 
-if mode == "train":
-    train_loader = torch.utils.data.DataLoader(
-        FakeDataset(transforms.Compose([
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            normalize,
-        ])),
-        batch_size=batch_size, shuffle=True,
-        num_workers=num_worker, pin_memory=True)
-else:
-    train_loader = torch.utils.data.DataLoader(
-        datasets.ImageFolder(traindir, transforms.Compose([
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            normalize,
-        ])),
-        batch_size=batch_size, shuffle=True,
-        num_workers=num_worker, pin_memory=True)
 
+if mode == "train":
+    train_dataset = FakeDataset(transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+        ]))
+else:
+    train_dataset = datasets.ImageFolder(traindir, transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+        ]))
+
+train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+
+
+train_loader = torch.utils.data.DataLoader(
+    train_dataset, sampler=train_sampler,
+    batch_size=batch_size,
+    num_workers=num_worker, pin_memory=True)
 
 
 
@@ -217,6 +236,9 @@ if arch.startswith('alexnet') or arch.startswith('vgg'):
     model.cuda()
 else:
     model = torch.nn.DataParallel(model).cuda()
+
+model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank])
+
 
 criterion = nn.CrossEntropyLoss().cuda()
 
