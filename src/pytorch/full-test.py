@@ -18,11 +18,11 @@ batch_size_list = [1024, 1024, 1024, 1536, 1024]
 
 
 
-mode = sys.argv[1]
-arch = arch_list[int(sys.argv[2])]
-num_worker = int(sys.argv[3])
+mode = sys.argv[2]
+arch = arch_list[int(sys.argv[3])]
+num_worker = int(sys.argv[4])
 
-batch_size = batch_size_list[int(sys.argv[2])]
+batch_size = batch_size_list[int(sys.argv[3])]
 print_freq = 5
 limit = 200
 
