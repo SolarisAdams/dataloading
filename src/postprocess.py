@@ -1,9 +1,9 @@
 import os
 
-root = "/home/Adama/dataloading/loading/"
+root = "/home/Adama/dataloading/test_result/"
 files = os.listdir(root)
 sleep = 0
-start = 40
+start = 200
 
 with open(root + "avg.ans","w") as fo:
     for filename in files:
@@ -44,6 +44,7 @@ with open(root + "avg.ans","w") as fo:
                         total_time += float(time)
                 if p > start:
                     ans = (p-start)*batch_size/total_time
+            # fn = filename[:-4].split("-")
             print(filename[:-4] + "\t", ans, file=fo)
             print(filename[:-4], "\t", ans, "\t", batch_size)
             

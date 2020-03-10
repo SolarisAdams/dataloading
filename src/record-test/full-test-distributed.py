@@ -14,6 +14,12 @@ from PIL import Image
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import argparse
+from tfrecord.torch.dataset import TFRecordDataset
+import recordio
+
+
+
+
 
 NUM_GPU = 4
 
@@ -25,7 +31,7 @@ mode_list = ["full", "load", "train"]
 parser = argparse.ArgumentParser()
 parser.add_argument('--local_rank', default=0, type=int,
                     help='node rank for distributed training')
-parser.add_argument('--mode', default="train", choices=mode_list,
+parser.add_argument('--mode', default="full", choices=mode_list,
                     help='work mode')
 parser.add_argument('--arch', default=0, type=int,
                     help='arch') 
@@ -147,6 +153,7 @@ def train(train_loader, model, criterion, optimizer, epoch, name, mode):
                 print(str(batch_time.val) + "\t" + str(len(input)/batch_time.val) + "\t" + str(load_time) + "\t" + str(trans_time) + "\t" + str(train_time), file=f)
     else:
         for i, (input, target) in enumerate(train_loader):
+            target = target.long()
             if i>=limit:
                 break
             # print(input, target)
@@ -189,10 +196,10 @@ def train(train_loader, model, criterion, optimizer, epoch, name, mode):
             end = time.time()
 
             if i % print_freq == 0:
-                print('Epoch: [{0}][{1}/{2}]\t'
+                print('Epoch: [{0}][{1}]\t'
                     'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                     'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'.format(
-                    epoch, i, len(train_loader), batch_time=batch_time,
+                    epoch, i, batch_time=batch_time,
                     data_time=data_time))
 
             # with open("/home/Adama/dataloading/"+name+"-"+str(len(target))+".txt", "a+") as f:
@@ -217,19 +224,26 @@ if mode == "train":
             normalize,
         ]))
 else:
-    train_dataset = datasets.ImageFolder(traindir, transforms.Compose([
+    tfrecord_path = "/data/ImageNet/train-"+str(args.local_rank)+".tfrecord"
+    index_path = "/data/ImageNet/train.idx"
+    description = {"image": "byte", "label": "int"}
+    train_dataset = recordio.RecordDataset(tfrecord_path, None, description, transforms.Compose([
             transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             normalize,
         ]))
+    # train_dataset = TFRecordDataset(tfrecord_path, None, description)
 
-train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, 4, args.local_rank)
+# for data in train_dataset:
+#     print(data)
+
+# train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, 4, args.local_rank)
 
 
 train_loader = torch.utils.data.DataLoader(
-    train_dataset, sampler=train_sampler,
-    batch_size=batch_size,
+    train_dataset, 
+    batch_size=batch_size, 
     num_workers=num_worker, pin_memory=True)
 
 
